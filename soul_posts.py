@@ -2,6 +2,8 @@ from cc98 import *
 from bs4 import *
 from thread import *
 from Queue import *
+import re
+
 name = "ph-test"
 password = "1qaz"
 
@@ -30,12 +32,24 @@ def get_uid(url):
 def get_url(BoardUrl):
 	response = cc.opener.open(BoardUrl)
 	soup = BeautifulSoup(response.read())
+	#each post
 	for i in soup.find_all('td', class_ = "tablebody1"):
 		try:
-			UrlHref = i.find('a')['href']
-			UrlQueue.put(UrlSite+UrlHref)
+			UrlHref = i.find_all('a')
+			if len(UrlHref) == 1:
+				UrlQueue.put(UrlSite+UrlHref[0]['href'])
+			else:
+				PagePattern = re.compile(r'star=\d+')
+				#the link to the last page of the post
+				LastPage = UrlHref[-1]['href']
+				PageLen = int(PagePattern.search(LastPage).group()[5:])
+				for i in range(1, PageLen+1):
+					RepNum = 'star=' + str(i)
+					PageUrl = PagePattern.sub(RepNum,LastPage)
+					UrlQueue.put(UrlSite+PageUrl)
 		except:
 			pass
+
 
 
 def main():
@@ -45,7 +59,9 @@ def main():
 	UrlPost = "http://www.cc98.org/dispbbs.asp?boardID=182&ID=4213090&page=1"
 	get_url(url_soul)
 	while not UrlQueue.empty():
+		#
 		get_uid(UrlQueue.get())
+		#print UrlQueue.get()
 	#
 	#for i in UserHashCount:
 	#	print i,
