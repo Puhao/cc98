@@ -20,4 +20,12 @@ for i in title:
 	except:
 		pass
 
+	NextPages = i.find_all('a')
+	try:
+		for i in NextPages:
+			print i['href']
+	except:
+		pass
+
+
 
