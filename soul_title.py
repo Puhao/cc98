@@ -1,5 +1,6 @@
 from cc98 import *
 from bs4 import *
+import re
 name = "ph-test"
 password = "1qaz"
 
@@ -22,8 +23,17 @@ for i in title:
 
 	NextPages = i.find_all('a')
 	try:
-		for i in NextPages:
-			print i['href']
+		if len(NextPages) == 1:
+			print "Only One"
+		else:
+			PageUrl = NextPages[-1]['href']
+			PageLen = int(re.search(r'star=\d+',PageUrl).group()[5:])
+			for k in range(1, PageLen+1):
+				RepPageNum = 'star=' + str(k)
+				VisitUrl = re.sub(r'star=\d+', RepPageNum, PageUrl)
+				print VisitUrl
+
+
 	except:
 		pass
 
