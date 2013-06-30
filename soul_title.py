@@ -10,4 +10,12 @@ response = cc.opener.open(url_soul)
 
 soup = BeautifulSoup(response.read())
 
-print soup.prettify() 
+title = soup.find_all('td', class_ = "tablebody1")
+
+for i in title:
+	tmp = i.find('a')
+	try:
+		print tmp['title']
+		print tmp['href']
+	except:
+		pass
