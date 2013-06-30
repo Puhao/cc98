@@ -27,10 +27,11 @@ for i in title:
 			print "Only One"
 		else:
 			PageUrl = NextPages[-1]['href']
-			PageLen = int(re.search(r'star=\d+',PageUrl).group()[5:])
+			pattern = re.compile(r'star=\d')
+			PageLen = int(pattern.search(PageUrl).group()[5:])
 			for k in range(1, PageLen+1):
 				RepPageNum = 'star=' + str(k)
-				VisitUrl = re.sub(r'star=\d+', RepPageNum, PageUrl)
+				VisitUrl = pattern.sub(RepPageNum, PageUrl)
 				print VisitUrl
 
 
