@@ -54,23 +54,16 @@ def get_url(BoardUrl):
 
 def main():
 	url_soul = "http://www.cc98.org/list.asp?boardid=182"
-
 	cc.login()
 	UrlPost = "http://www.cc98.org/dispbbs.asp?boardID=182&ID=4213090&page=1"
 	get_url(url_soul)
 	while not UrlQueue.empty():
-		#
 		get_uid(UrlQueue.get())
-		#print UrlQueue.get()
-	#
-	#for i in UserHashCount:
-	#	print i,
-	#	print ":",
-	#	print UserHashCount[i]
-	#
+
 	#Sort the Dict
 	b = sorted(UserHashCount.items(), key=lambda d:d[1], reverse = True)
-	for i in b:
+
+	for i in b[:15]:
 		print i[0],
 		print ":",
 		print i[1]
