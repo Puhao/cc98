@@ -12,9 +12,11 @@ UrlSite = "http://www.cc98.org/"
 cc = cc98(name,password)
 
 UrlQueue = Queue()
+PageQueue = Queue()
 
 UserHashCount = {}
 
+#according to the post, find each user
 def get_uid(url):
 	response = cc.opener.open(url)
 	soup = BeautifulSoup(response.read())
@@ -29,8 +31,9 @@ def get_uid(url):
 		 except:
 		 	pass
 
-def get_url(BoardUrl):
-	response = cc.opener.open(BoardUrl)
+#according to the page, find each post
+def get_url(PageUrl):
+	response = cc.opener.open(PageUrl)
 	soup = BeautifulSoup(response.read())
 	#each post
 	for i in soup.find_all('td', class_ = "tablebody1"):
@@ -50,20 +53,34 @@ def get_url(BoardUrl):
 		except:
 			pass
 
+#according to the board, find the pages
+def get_page(BoardUrl, len = 10):
+	#
+	#response = cc.opener.open(BoardUrl)
+	#soup = BeautifulSoup(response.read())
+	PageExtend = "&page="
+	for i in range(1,len+1):
+		PageSuffix = PageExtend + str(i)
+		PageQueue.put(BoardUrl+PageSuffix)
 
 
 def main():
+	#soul board
 	url_soul = "http://www.cc98.org/list.asp?boardid=182"
+	#love board
+	BoardUrl = "http://www.cc98.org/list.asp?boardid=152"
 	cc.login()
 	UrlPost = "http://www.cc98.org/dispbbs.asp?boardID=182&ID=4213090&page=1"
-	get_url(url_soul)
-	while not UrlQueue.empty():
-		get_uid(UrlQueue.get())
+	get_page(url_soul)
+	while not PageQueue.empty():
+		get_url(PageQueue.get())
+		while not UrlQueue.empty():
+			get_uid(UrlQueue.get())
 
 	#Sort the Dict
 	b = sorted(UserHashCount.items(), key=lambda d:d[1], reverse = True)
 
-	for i in b[:15]:
+	for i in b[:25]:
 		print i[0],
 		print ":",
 		print i[1]
