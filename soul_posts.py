@@ -142,7 +142,7 @@ def get_page(BoardId, len = 10):
 
 def main():
 	cc.login()
-	get_page(BoarIdInfo["soul"],10)
+	get_page(BoarIdInfo["love"],10)
 	while not PageQueue.empty():
 		a = PageQueue.get()
 		#print a
@@ -152,9 +152,9 @@ def main():
 			for i in range(1,t[2]+1):
 				get_user_post(t[0],t[1],str(i))
 	#Sort the Dict
-	b = sorted(UserPostInfo.items(), key=lambda d:d[1][0], reverse = True)
+	b = sorted(UserPostInfo.items(), key=lambda d:len(d[1][1]), reverse = True)
 
-	for i in b[:25]:
+	for i in b:
 		print i[0],
 		print ":",
 		info = i[1]
