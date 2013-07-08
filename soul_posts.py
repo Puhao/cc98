@@ -3,6 +3,8 @@ from cc98 import *
 from bs4 import *
 from thread import *
 from Queue import *
+import json
+import cPickle
 import re
 
 name = "ph-test"
@@ -151,6 +153,12 @@ def main():
 			t = PostQueue.get()
 			for i in range(1,t[2]+1):
 				get_user_post(t[0],t[1],str(i))
+
+	FileName = "user.json"
+	FileStore = file(FileName, "w")
+	StoreInfo = json.dumps(UserPostInfo)
+	cPickle.dump(StoreInfo, FileStore)
+	FileStore.close()
 	#Sort the Dict
 	b = sorted(UserPostInfo.items(), key=lambda d:len(d[1][1]), reverse = True)
 
