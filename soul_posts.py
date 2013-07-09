@@ -1,4 +1,4 @@
-# coding = utf-8
+# coding=utf-8
 from cc98 import *
 from bs4 import *
 from thread import *
