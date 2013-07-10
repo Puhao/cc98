@@ -31,20 +31,17 @@ BoarIdInfo = {
 	"love":152
 }
 
-#each floor in contain information
-FloorInfo = {
-	"user":"",
-	"floor":"",
-	"time":"",
-	"date":"",
-	"message":"",
-	"location":[],
-}
 
 cc = cc98(name,password)
 
 #Page to be parsed Queue
 PageToParseQueue = Queue()
+
+def queue_info():
+	while True:
+		print "PageToParseQueue:",
+		print PageToParseQueue.qsize()
+		sleep(30)
 
 def save_post_info():
 	while True:
@@ -66,6 +63,7 @@ def save_post_info():
 			 	info_tr2 = info_tr1.next_sibling.next_sibling
 			 	info_tr1_td1 = info_tr1.td
 			 	info_tr1_td2 = info_tr1_td1.next_sibling.next_sibling
+			 	FloorInfo = {}
 			 	FloorInfo["user"] = info_tr1_td1.td.b.string
 			 	FloorInfo["floor"] = ''.join(info_tr1_td2.tr.get_text().split())
 			 	TimeData = info_tr2.td.contents[2].string
@@ -139,7 +137,10 @@ def get_board():
 ThreadList = []
 def main():
 	cc.login()
-	#print_post_info("147","4219781","2")
+
+	queue_info_thread = Thread(target=queue_info)
+	ThreadList.append(queue_info_thread)
+
 	get_board_thread = Thread(target=get_board)
 	ThreadList.append(get_board_thread)
 	
@@ -150,14 +151,9 @@ def main():
 		i = Thread(target=parse_page)
 		ThreadList.append(i)
 
-	for i in range(0,10):
+	for i in range(0,20):
 		i = Thread(target=save_post_info)
 		ThreadList.append(i)
-
-	for i in range(10):
-		FloorInfo["date"] = i
-		Collection.insert(FloorInfo)
-		sleep(1)
 
 	for thread_each in ThreadList:
 		thread_each.start()
