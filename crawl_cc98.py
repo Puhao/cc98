@@ -37,12 +37,6 @@ cc = cc98(name,password)
 #Page to be parsed Queue
 PageToParseQueue = Queue()
 
-def queue_info():
-	while True:
-		print "PageToParseQueue:",
-		print PageToParseQueue.qsize()
-		sleep(30)
-
 def save_post_info():
 	while True:
 		PageInfo = PageToParseQueue.get()
@@ -126,6 +120,12 @@ def parse_page():
 				pass
 	return
 		
+def queue_info():
+	while True:
+		print "PageToParseQueue:", PageToParseQueue.qsize()
+		print "BoardQueue:", BoardQueue.qsize()
+		print "BoadrPageQueue", BoadrPageQueue.qsize()
+		sleep(30)
 
 
 BoardList = ["182"]
@@ -147,11 +147,11 @@ def main():
 	parse_board_thread = Thread(target=parse_board)
 	ThreadList.append(parse_board_thread)
 
-	for i in range(0,5):
+	for i in range(0,2):
 		i = Thread(target=parse_page)
 		ThreadList.append(i)
 
-	for i in range(0,20):
+	for i in range(0,10):
 		i = Thread(target=save_post_info)
 		ThreadList.append(i)
 
