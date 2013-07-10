@@ -1,16 +1,17 @@
 # coding= utf-8
 from cc98 import *
 from bs4 import *
-from threading import Thread
+from threading import *
 from Queue import *
+from time import *
 import json
 import re
 
 from pymongo import MongoClient
+#DBClient = MongoClient()
 DBClient = MongoClient('10.110.91.236')
 DBSave = DBClient["test"]
 Collection = DBSave["test"]
-
 
 name = "ph-test"
 password = "1qaz"
@@ -72,10 +73,10 @@ def save_post_info():
 			 	FloorInfo["time"] = re.search(r'\d+:\d+:\d+\s\w+', TimeData).group()
 			 	FloorInfo["message"] = info_tr1_td2.blockquote.span.get_text()
 			 	FloorInfo["location"] = [BoardId, PostId, PageNum]
-			 	for i in FloorInfo:
-			 		print i,
-			 		print ":", FloorInfo[i]
-			 	print "---------"
+			 	try:
+			 		Collection.insert(FloorInfo)			 		
+			 	except:
+			 		print "MongoDB insert Error!"
 			 except:
 			 	pass
 	return
@@ -149,16 +150,20 @@ def main():
 		i = Thread(target=parse_page)
 		ThreadList.append(i)
 
-	for i in range(0,20):
+	for i in range(0,10):
 		i = Thread(target=save_post_info)
 		ThreadList.append(i)
+
+	for i in range(10):
+		FloorInfo["date"] = i
+		Collection.insert(FloorInfo)
+		sleep(1)
 
 	for thread_each in ThreadList:
 		thread_each.start()
 
 	for thread_each in ThreadList:
 		thread_each.join()
-	#Collection.insert(FloorInfo)
 
 if __name__ == '__main__':
 	main()
