@@ -52,7 +52,7 @@ def save_post_info():
 		url = DispSite + "?boardID=" + BoardId + "&ID=" + PostId + "&star=" + PageNum
 		try:
 			response = cc.opener.open(url)
-			soup = BeautifulSoup(response.read())
+			soup = BeautifulSoup(response.read(), "lxml")
 		except:
 			print "Http Request Error"
 			pass
@@ -88,7 +88,7 @@ def parse_board():
 		BoardUrl = ListSite + "?boardid=" + BoardId
 		try:
 			response = cc.opener.open(BoardUrl)
-			soup = BeautifulSoup(response.read())
+			soup = BeautifulSoup(response.read(), "lxml")
 		except:
 			print "Board Parse Request Error!"
 		Info = soup.body.form.next_sibling.next_sibling.td.get_text()
@@ -104,7 +104,7 @@ def parse_page():
 		PageUrl = ListSite + "?boardid=" + BoardId + "&page=" + BoardPage
 		try:
 			response = cc.opener.open(PageUrl)
-			soup = BeautifulSoup(response.read())
+			soup = BeautifulSoup(response.read(), "lxml")
 		except:
 			print "Page Parse Request Error!"
 		#find the ID of the post
