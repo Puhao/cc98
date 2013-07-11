@@ -41,8 +41,8 @@ PageToParseQueue = Queue()
 
 def queue_info():
 	while True:
-		print "PageToParseQueue:",
-		print PageToParseQueue.qsize()
+		print "PageToParseQueue:",PageToParseQueue.qsize()
+		print "BoadrPageQueue:", BoadrPageQueue.qsize()
 		sleep(30)
 
 def save_post_info():
@@ -59,7 +59,7 @@ def save_post_info():
 			print "Http Request Error"
 			ErrInfo = {}
 			ErrInfo["PageInfo"] = PageInfo
-			ErrInfo["BoardId"] = boardID
+			ErrInfo["BoardId"] = BoardId
 			ErrInfo["PostId"] = PostId
 			ErrInfo["PageNum"] = PageNum
 			LogColl.insert(ErrInfo)
