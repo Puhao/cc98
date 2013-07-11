@@ -11,7 +11,9 @@ from pymongo import MongoClient
 #DBClient = MongoClient()
 DBClient = MongoClient('10.110.91.236')
 DBSave = DBClient["test"]
-Collection = DBSave["test"]
+Collection = DBSave["love"]
+DBLog = DBClient["log"]
+LogColl = DBLog["Error"]
 
 name = "ph-test"
 password = "1qaz"
@@ -55,6 +57,12 @@ def save_post_info():
 			soup = BeautifulSoup(response.read(), "lxml")
 		except:
 			print "Http Request Error"
+			ErrInfo = {}
+			ErrInfo["PageInfo"] = PageInfo
+			ErrInfo["BoardId"] = boardID
+			ErrInfo["PostId"] = PostId
+			ErrInfo["PageNum"] = PageNum
+			LogColl.insert(ErrInfo)
 			pass
 		#each floor
 		for i in soup.find_all('table', class_ = "tableborder1"):
@@ -128,7 +136,7 @@ def parse_page():
 		
 
 
-BoardList = ["182"]
+BoardList = ["152"]
 def get_board():
 	for i in BoardList:
 		BoardQueue.put(i)
@@ -147,11 +155,11 @@ def main():
 	parse_board_thread = Thread(target=parse_board)
 	ThreadList.append(parse_board_thread)
 
-	for i in range(0,5):
+	for i in range(0,2):
 		i = Thread(target=parse_page)
 		ThreadList.append(i)
 
-	for i in range(0,20):
+	for i in range(0,10):
 		i = Thread(target=save_post_info)
 		ThreadList.append(i)
 
