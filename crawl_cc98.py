@@ -39,6 +39,15 @@ cc = cc98(name,password)
 #Page to be parsed Queue
 PageToParseQueue = Queue()
 
+<<<<<<< HEAD
+=======
+def queue_info():
+	while True:
+		print "PageToParseQueue:",PageToParseQueue.qsize()
+		print "BoadrPageQueue:", BoadrPageQueue.qsize()
+		sleep(30)
+
+>>>>>>> add error log
 def save_post_info():
 	while True:
 		PageInfo = PageToParseQueue.get()
@@ -53,7 +62,7 @@ def save_post_info():
 			print "Http Request Error"
 			ErrInfo = {}
 			ErrInfo["PageInfo"] = PageInfo
-			ErrInfo["BoardId"] = boardID
+			ErrInfo["BoardId"] = BoardId
 			ErrInfo["PostId"] = PostId
 			ErrInfo["PageNum"] = PageNum
 			LogColl.insert(ErrInfo)
