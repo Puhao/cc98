@@ -39,12 +39,6 @@ cc = cc98(name,password)
 #Page to be parsed Queue
 PageToParseQueue = Queue()
 
-def queue_info():
-	while True:
-		print "PageToParseQueue:",PageToParseQueue.qsize()
-		print "BoadrPageQueue:", BoadrPageQueue.qsize()
-		sleep(30)
-
 def save_post_info():
 	while True:
 		PageInfo = PageToParseQueue.get()
@@ -89,7 +83,7 @@ def save_post_info():
 
 #according to the board, calculate the pages
 BoardQueue = Queue()
-BoadrPageQueue = Queue()
+BoardPageQueue = Queue()
 def parse_board():
 	while True:
 		BoardId = BoardQueue.get()
@@ -102,13 +96,13 @@ def parse_board():
 		Info = soup.body.form.next_sibling.next_sibling.td.get_text()
 		BoardLen = re.search(r'1/\d+', Info).group()[2:]
 		for i in range(1,int(BoardLen)+1):
-			BoadrPageQueue.put([BoardId, str(i)])
+			BoardPageQueue.put([BoardId, str(i)])
 	return
 
 #parse each page to find the length of each post in this page
 def parse_page():
 	while True:
-		BoardId, BoardPage = BoadrPageQueue.get()
+		BoardId, BoardPage = BoardPageQueue.get()
 		PageUrl = ListSite + "?boardid=" + BoardId + "&page=" + BoardPage
 		try:
 			response = cc.opener.open(PageUrl)
@@ -134,6 +128,12 @@ def parse_page():
 				pass
 	return
 		
+def queue_info():
+	while True:
+		print "PageToParseQueue:", PageToParseQueue.qsize()
+		print "BoardQueue:", BoardQueue.qsize()
+		print "BoardPageQueue", BoardPageQueue.qsize()
+		sleep(30)
 
 
 BoardList = ["152"]
