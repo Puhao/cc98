@@ -39,15 +39,6 @@ cc = cc98(name,password)
 #Page to be parsed Queue
 PageToParseQueue = Queue()
 
-<<<<<<< HEAD
-=======
-def queue_info():
-	while True:
-		print "PageToParseQueue:",PageToParseQueue.qsize()
-		print "BoadrPageQueue:", BoadrPageQueue.qsize()
-		sleep(30)
-
->>>>>>> add error log
 def save_post_info():
 	while True:
 		PageInfo = PageToParseQueue.get()
@@ -62,9 +53,9 @@ def save_post_info():
 			print "Http Request Error"
 			ErrInfo = {}
 			ErrInfo["PageInfo"] = PageInfo
-			ErrInfo["BoardId"] = BoardId
-			ErrInfo["PostId"] = PostId
-			ErrInfo["PageNum"] = PageNum
+			ErrInfo["BoardId"] = int(BoardId)
+			ErrInfo["PostId"] = int(PostId)
+			ErrInfo["PageNum"] = int(PageNum)
 			LogColl.insert(ErrInfo)
 			pass
 		#each floor
@@ -81,9 +72,9 @@ def save_post_info():
 			 	FloorInfo["date"] = re.search(r'\d+/\d+/\d+', TimeData).group()
 			 	FloorInfo["time"] = re.search(r'\d+:\d+:\d+\s\w+', TimeData).group()
 			 	FloorInfo["message"] = info_tr1_td2.blockquote.span.get_text()
-			 	FloorInfo['BoardId'] = BoardId
-			 	FloorInfo['PostId'] = PostId
-			 	FloorInfo['PageNum'] = PageNum
+			 	FloorInfo['BoardId'] = int(BoardId)
+			 	FloorInfo['PostId'] = int(PostId)
+			 	FloorInfo['PageNum'] = int(PageNum)
 			 	try:
 			 		Collection.insert(FloorInfo)			 		
 			 	except:
