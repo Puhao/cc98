@@ -81,7 +81,9 @@ def save_post_info():
 			 	FloorInfo["date"] = re.search(r'\d+/\d+/\d+', TimeData).group()
 			 	FloorInfo["time"] = re.search(r'\d+:\d+:\d+\s\w+', TimeData).group()
 			 	FloorInfo["message"] = info_tr1_td2.blockquote.span.get_text()
-			 	FloorInfo["location"] = [BoardId, PostId, PageNum]
+			 	FloorInfo['BoardId'] = BoardId
+			 	FloorInfo['PostId'] = PostId
+			 	FloorInfo['PageNum'] = PageNum
 			 	try:
 			 		Collection.insert(FloorInfo)			 		
 			 	except:
