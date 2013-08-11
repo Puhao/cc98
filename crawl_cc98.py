@@ -10,8 +10,8 @@ import re
 from pymongo import MongoClient
 #DBClient = MongoClient()
 DBClient = MongoClient('112.124.9.75')
-DBSave = DBClient["test"]
-Collection = DBSave["love"]
+DBSave = DBClient["cc98"]
+Collection = DBSave["soul"]
 DBLog = DBClient["log"]
 LogColl = DBLog["Error"]
 
