@@ -136,7 +136,7 @@ def queue_info():
 		sleep(30)
 
 
-BoardList = ["152"]
+BoardList = ["182"]
 def get_board():
 	for i in BoardList:
 		BoardQueue.put(i)
