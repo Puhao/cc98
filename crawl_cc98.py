@@ -10,8 +10,10 @@ import re
 from pymongo import MongoClient
 #DBClient = MongoClient()
 DBClient = MongoClient('10.110.91.236')
-DBSave = DBClient["test"]
-Collection = DBSave["test"]
+DBSave = DBClient["cc98"]
+Collection = DBSave["soul"]
+DBLog = DBClient["log"]
+LogColl = DBLog["Error"]
 
 name = "ph-test"
 password = "1qaz"
@@ -49,6 +51,12 @@ def save_post_info():
 			soup = BeautifulSoup(response.read(), "lxml")
 		except:
 			print "Http Request Error"
+			ErrInfo = {}
+			ErrInfo["PageInfo"] = PageInfo
+			ErrInfo["BoardId"] = int(BoardId)
+			ErrInfo["PostId"] = int(PostId)
+			ErrInfo["PageNum"] = int(PageNum)
+			LogColl.insert(ErrInfo)
 			pass
 		#each floor
 		for i in soup.find_all('table', class_ = "tableborder1"):
@@ -64,7 +72,9 @@ def save_post_info():
 			 	FloorInfo["date"] = re.search(r'\d+/\d+/\d+', TimeData).group()
 			 	FloorInfo["time"] = re.search(r'\d+:\d+:\d+\s\w+', TimeData).group()
 			 	FloorInfo["message"] = info_tr1_td2.blockquote.span.get_text()
-			 	FloorInfo["location"] = [BoardId, PostId, PageNum]
+			 	FloorInfo['BoardId'] = int(BoardId)
+			 	FloorInfo['PostId'] = int(PostId)
+			 	FloorInfo['PageNum'] = int(PageNum)
 			 	try:
 			 		Collection.insert(FloorInfo)			 		
 			 	except:
@@ -75,7 +85,7 @@ def save_post_info():
 
 #according to the board, calculate the pages
 BoardQueue = Queue()
-BoadrPageQueue = Queue()
+BoardPageQueue = Queue()
 def parse_board():
 	while True:
 		BoardId = BoardQueue.get()
@@ -88,13 +98,13 @@ def parse_board():
 		Info = soup.body.form.next_sibling.next_sibling.td.get_text()
 		BoardLen = re.search(r'1/\d+', Info).group()[2:]
 		for i in range(1,int(BoardLen)+1):
-			BoadrPageQueue.put([BoardId, str(i)])
+			BoardPageQueue.put([BoardId, str(i)])
 	return
 
 #parse each page to find the length of each post in this page
 def parse_page():
 	while True:
-		BoardId, BoardPage = BoadrPageQueue.get()
+		BoardId, BoardPage = BoardPageQueue.get()
 		PageUrl = ListSite + "?boardid=" + BoardId + "&page=" + BoardPage
 		try:
 			response = cc.opener.open(PageUrl)
@@ -124,7 +134,7 @@ def queue_info():
 	while True:
 		print "PageToParseQueue:", PageToParseQueue.qsize()
 		print "BoardQueue:", BoardQueue.qsize()
-		print "BoadrPageQueue", BoadrPageQueue.qsize()
+		print "BoardPageQueue", BoardPageQueue.qsize()
 		sleep(30)
 
 
