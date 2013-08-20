@@ -9,7 +9,7 @@ import re
 
 from pymongo import MongoClient
 #DBClient = MongoClient()
-DBClient = MongoClient('112.124.9.75')
+DBClient = MongoClient('10.110.91.236')
 DBSave = DBClient["cc98"]
 Collection = DBSave["soul"]
 DBLog = DBClient["log"]
@@ -135,7 +135,7 @@ def queue_info():
 		print "PageToParseQueue:", PageToParseQueue.qsize()
 		print "BoardQueue:", BoardQueue.qsize()
 		print "BoardPageQueue", BoardPageQueue.qsize()
-		sleep(30)
+		sleep(3)
 
 
 BoardList = ["182"]
@@ -144,6 +144,11 @@ def get_board():
 		BoardQueue.put(i)
 	return
 
+def complete_error():
+	itmes = LogColl.find()
+	for i in itmes:
+		PageToParseQueue.put(i['PageInfo'])
+		LogColl.remove({"_id":i['_id']})
 ThreadList = []
 def main():
 	cc.login()
@@ -152,16 +157,18 @@ def main():
 	ThreadList.append(queue_info_thread)
 
 	get_board_thread = Thread(target=get_board)
-	ThreadList.append(get_board_thread)
+	#ThreadList.append(get_board_thread)
 	
 	parse_board_thread = Thread(target=parse_board)
-	ThreadList.append(parse_board_thread)
+	#ThreadList.append(parse_board_thread)
+
+	complete_error()
 
 	for i in range(0,2):
 		i = Thread(target=parse_page)
-		ThreadList.append(i)
+		#ThreadList.append(i)
 
-	for i in range(0,10):
+	for i in range(0,3):
 		i = Thread(target=save_post_info)
 		ThreadList.append(i)
 
