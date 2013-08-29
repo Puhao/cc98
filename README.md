@@ -17,6 +17,9 @@ CC98
 3.	pymongo  
 	MongoDB的python接口  
 	```
-	pip install pymongo
+	pip install pymongo	
 	```
+4.	jieba  
+	用于分词  
+	`` pip install jieba ``
 	
