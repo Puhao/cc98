@@ -17,6 +17,7 @@ from pymongo import MongoClient
 DBClient = MongoClient('10.110.91.236')
 DBSave = DBClient["cc98"]
 Collection = DBSave["soul"]
+AnalyColl = DBSave["analyse"]
 
 name = "ph-test"
 password = "1qaz"
@@ -41,20 +42,28 @@ def post_analyse():
 		tmp = {}
 		tmp["BoardId"] = item[0];
 		tmp["PostId"] = item[1];
-		MessFind = Collection.find({"PostId":item[1],"BoardId":i},{"_id":False,"message":True},)
+		MessTotal = ''
+		MessFind = Collection.find({"PostId":item[1],"BoardId":item[0]},{"_id":False,"message":True},)
+		for i in MessFind:
+			MessTotal += i['message']
+		tags = jieba.analyse.extract_tags(MessTotal, topK=30)
+		tmp["tags"] = tags
+		print ",".join(tags)
+		AnalyColl.insert(tmp)
 
+
+def queue_info():
+	while True:
+		print "Queue size:", PostQueue.qsize()
+		sleep(30)
+	return
 
 
 def main():
 	ThreadList = []
 	PostDict = {}
-	for thread_each in ThreadList:
-		thread_each.start()
-
-	for thread_each in ThreadList:
-		thread_each.join()
-
-	res = Collection.find({"PageNum":{"$gt":30}},{"PostId":True,"BoardId":True,"_id":False},limit=300)
+	
+	res = Collection.find({"PageNum":{"$gt":30}},{"PostId":True,"BoardId":True,"_id":False},)
 	for i in res:
 		if i["BoardId"] in PostDict:
 			PostDict[i["BoardId"]].add(i["PostId"])
@@ -63,17 +72,23 @@ def main():
 
 	for i in PostDict:
 		for j in PostDict[i]:
+			print j
 			PostQueue.put([i,j])
-			MessTotal = ''
-			print "Query pre", datetime.datetime.now()
-			MessFind = Collection.find({"PostId":j,"BoardId":i},{"_id":False,"message":True},)
-			print "Query post", datetime.datetime.now()
-			for k in MessFind:
-				MessTotal += k['message']
-			print "Fenci pre", datetime.datetime.now()
-			tags = jieba.analyse.extract_tags(MessTotal, topK=20)
-			print ",".join(tags)
-			print "Fenci done", datetime.datetime.now()
+
+	print "Find Post Done"
+
+	for i in range(10):
+		i = Thread(target=post_analyse)
+		ThreadList.append(i)
+
+	queue_info_thread = Thread(target=queue_info)
+	ThreadList.append(queue_info_thread)
+
+	for thread_each in ThreadList:
+		thread_each.start()
+
+	for thread_each in ThreadList:
+		thread_each.join()
 	
 
 if __name__ == '__main__':
