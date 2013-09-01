@@ -4,6 +4,7 @@ from time import *
 from Queue import *
 from sets import Set
 import datetime
+import re
 import json
 import jieba
 import jieba.analyse
@@ -36,6 +37,19 @@ ListSite = "http://www.cc98.org/list.asp"
 
 PostQueue = Queue()
 
+def tags_filter(tag):
+	ReFilter = []
+	#ReFilter.append(re.compile(r'^\d+$'))
+	ReFilter.append(re.compile(r'^\w+$'))
+	for i in ReFilter:
+		if i.match(tag):
+			return False
+	ChiFilter = ["楼主", "匿名", "引用", "发言", "以下"]
+	if tag in ChiFilter:
+		return False
+	else:
+		return True
+
 def post_analyse():
 	while True:
 		item = PostQueue.get()
@@ -47,6 +61,7 @@ def post_analyse():
 		for i in MessFind:
 			MessTotal += i['message']
 		tags = jieba.analyse.extract_tags(MessTotal, topK=30)
+		tags = filter(tags_filter,tags)
 		tmp["tags"] = tags
 		print ",".join(tags)
 		AnalyColl.insert(tmp)
