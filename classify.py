@@ -14,8 +14,8 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 from pymongo import MongoClient
-#DBClient = MongoClient()
-DBClient = MongoClient('10.110.91.236')
+DBClient = MongoClient()
+#DBClient = MongoClient('10.110.91.236')
 DBSave = DBClient["cc98"]
 Collection = DBSave["soul"]
 AnalyColl = DBSave["analyse"]
@@ -39,7 +39,7 @@ PostQueue = Queue()
 
 def tags_filter(tag):
 	ReFilter = []
-	#ReFilter.append(re.compile(r'^\d+$'))
+	ReFilter.append(re.compile(r'^\.+$'))
 	ReFilter.append(re.compile(r'^\w+$'))
 	for i in ReFilter:
 		if i.match(tag):
@@ -60,7 +60,7 @@ def post_analyse():
 		MessFind = Collection.find({"PostId":item[1],"BoardId":item[0]},{"_id":False,"message":True},)
 		for i in MessFind:
 			MessTotal += i['message']
-		tags = jieba.analyse.extract_tags(MessTotal, topK=30)
+		tags = jieba.analyse.extract_tags(MessTotal, topK=40)
 		tags = filter(tags_filter,tags)
 		tmp["tags"] = tags
 		print ",".join(tags)
